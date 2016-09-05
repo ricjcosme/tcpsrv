@@ -1,9 +1,9 @@
 tcpsrv
 =====
 
-An OTP application
+A small and simple TCP server and dispatcher
 
 Build
 -----
 
-    $ rebar3 compile
+    $ rebar compile

@@ -1,11 +1,12 @@
 {application, tcpsrv,
- [{description, "TCP multi server"},
+ [{description, "A small and simple TCP server and dispatcher"},
   {vsn, "0.1.0"},
   {registered, []},
   {mod, { tcpsrv_app, []}},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    inets
    ]},
   {env,[]},
   {modules, []},
