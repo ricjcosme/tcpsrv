@@ -18,6 +18,7 @@
 -define(REDIS_PORT, case os:getenv("TCPSRV_REDIS_PORT") of false -> 6379; _ -> [ERedisport] = os:getenv("TCPSRV_REDIS_PORT"), list_to_integer(ERedisport) end).
 
 start() ->
+    io:format("~p~n", [?PORT]),
     case gen_tcp:listen(?PORT,[{active, false},{packet,?PACKET},?BINARY_OR_LIST]) of
         {ok, ListenSock} ->
             start_servers(?SERVERS,ListenSock),
