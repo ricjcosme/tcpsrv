@@ -67,7 +67,7 @@ toDataStore(DataStore, DataTuple) ->
     {Mega,Sec,Micro} = os:timestamp(),
     {{Year, Month, Day}, {Hour, Minute, Second}} = calendar:now_to_datetime({Mega,Sec,Micro}),
     StrTime = lists:flatten(io_lib:format("~4..0w-~2..0w-~2..0wT~2..0w:~2..0w:~2..0w.~6..0wZ",[Year,Month,Day,Hour,Minute,Second,Micro])),
-    Body = "{\"message\":\"" ++ subs(binary_to_list(Data)) 
+    Body = "{\"message\":\"" ++ subs(binary_to_list(Data), http)
             ++ "\", \"ip\":\"" ++ IP ++ "\", \"timestamp\":\"" ++ StrTime ++ "\"}",
     case DataStore of
         elasticsearch ->
@@ -77,7 +77,7 @@ toDataStore(DataStore, DataTuple) ->
             Host = ?REDIS_HOST,
             Port = ?REDIS_PORT,
             Key = IP ++ ":" ++ StrTime,
-            spawn(?MODULE,tcp_cli, [Host, Port, Key, subs(binary_to_list(Data))]);
+            spawn(?MODULE,tcp_cli, [Host, Port, Key, subs(binary_to_list(Data), socket)]);
         solr ->
             URL = "http://" ++ ?SOLR_HOST_PORT ++ "/solr/" ++ ?SOLR_CORE ++ "/update/json/docs?commit=true",
             spawn(?MODULE,http_post,[URL,Body]);
@@ -100,6 +100,15 @@ http_post(URL, Body) ->
     R = httpc:request(Method, {URL, Header, Type, Body}, HTTPOptions, Options),
     io:format("~p~n", [R]).
 
-subs(Text) ->
-    A = re:replace(Text,"\n"," ",[{return,list}]),
-    re:replace(A,"\t"," ",[{return,list}]).
+subs(Text, socket) ->
+    A = re:replace(Text,"\n"," ",[{return,list},global]),
+    B = re:replace(A,"\t"," ",[{return,list},global]),
+    re:replace(B,"\"","'",[{return,list},global]);
+subs(Text, http) ->
+    A = re:replace(Text,"\n"," ",[{return,list},global]),
+    B = re:replace(A,"\t"," ",[{return,list},global]),
+    C = re:replace(B,"\b"," ",[{return,list},global]),
+    D = re:replace(C,"\r"," ",[{return,list},global]),
+    E = re:replace(D,"\f"," ",[{return,list},global]),
+    F = re:replace(E,"\"","'",[{return,list},global]),
+    re:replace(F,"\\\\","",[{return,list},global]).
