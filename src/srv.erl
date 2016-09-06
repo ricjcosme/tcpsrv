@@ -1,20 +1,21 @@
 -module(srv).
 -author("Ricardo Cosme <ricjcosme@gmail.com>").
 -compile(export_all).
--define(PORT, 10001).
--define(SERVERS, 10).
--define(TIMEOUT, 60000).
--define(PACKET, line).
--define(BINARY_OR_LIST, binary).
--define(DATASTORE, elasticsearch). %% redis | elasticsearch (default) | solr, others can be added with toDataStore/1
--define(DST_HOST, "localhost").
--define(EL_HOST_PORT, ?DST_HOST ++ ":9200").
--define(EL_INDEX, "log").
--define(EL_MAPPING, "logs").
--define(SOLR_HOST_PORT, ?DST_HOST ++ ":8983").
--define(SOLR_CORE, "logs").
+-define(PORT, case os:getenv("TCPSRV_PORT") of false -> 10001; _ -> os:getenv("TCPSRV_PORT") end).
+-define(SERVERS, case os:getenv("TCPSRV_SERVERS") of false -> 10; _ -> os:getenv("TCPSRV_SERVERS") end).
+-define(TIMEOUT, case os:getenv("TCPSRV_TIMEOUT") of false -> 60000; _ -> os:getenv("TCPSRV_TIMEOUT") end).
+-define(PACKET, case os:getenv("TCPSRV_PACKET") of false -> line; _ -> os:getenv("TCPSRV_PACKET") end).
+-define(BINARY_OR_LIST, case os:getenv("TCPSRV_BINARY_OR_LIST") of false -> binary; _ -> os:getenv("TCPSRV_BINARY_OR_LIST") end).
+%% DATASTORE redis | elasticsearch (default) | solr, others can be added via toDataStore/2
+-define(DATASTORE, case os:getenv("TCPSRV_DATASTORE") of false -> elasticsearch; _ -> os:getenv("TCPSRV_DATASTORE") end).
+-define(DST_HOST, case os:getenv("TCPSRV_DST_HOST") of false -> "localhost"; _ -> os:getenv("TCPSRV_DST_HOST") end).
+-define(EL_HOST_PORT, case os:getenv("TCPSRV_EL_HOST_PORT") of false -> ?DST_HOST ++ ":9200"; _ -> os:getenv("TCPSRV_EL_HOST_PORT") end).
+-define(EL_INDEX, case os:getenv("TCPSRV_EL_INDEX") of false -> "log"; _ -> os:getenv("TCPSRV_EL_INDEX") end).
+-define(EL_MAPPING, case os:getenv("TCPSRV_EL_MAPPING") of false -> "logs"; _ -> os:getenv("TCPSRV_EL_MAPPING") end).
+-define(SOLR_HOST_PORT, case os:getenv("TCPSRV_SOLR_HOST_PORT") of false -> ?DST_HOST ++ ":8983"; _ -> os:getenv("TCPSRV_SOLR_HOST_PORT") end).
+-define(SOLR_CORE, case os:getenv("TCPSRV_SOLR_CORE") of false -> "logs"; _ -> os:getenv("TCPSRV_SOLR_CORE") end).
 -define(REDIS_HOST, ?DST_HOST).
--define(REDIS_PORT, 6379).
+-define(REDIS_PORT, case os:getenv("TCPSRV_REDIS_PORT") of false -> 6379; _ -> os:getenv("TCPSRV_REDIS_PORT") end).
 
 start() ->
     case gen_tcp:listen(?PORT,[{active, false},{packet,?PACKET},?BINARY_OR_LIST]) of
