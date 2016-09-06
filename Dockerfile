@@ -5,15 +5,15 @@ MAINTAINER	Ricardo Cosme <ricjcosme@gmail.com>
 ENV			TCPSRV_PORT=10001 \
 			TCPSRV_SERVERS=10 \
 			TCPSRV_TIMEOUT=60000 \
-			TCPSRV_PACKET="line" \
-			TCPSRV_BINARY_OR_LIST="binary" \
-			TCPSRV_DATASTORE="elasticsearch" \
-			TCPSRV_DST_HOST="localhost" \
-			TCPSRV_EL_HOST_PORT="${TCPSRV_DST_HOST}:9200" \
-			TCPSRV_EL_INDEX="log" \
-			TCPSRV_EL_MAPPING="logs" \
-			TCPSRV_SOLR_HOST_PORT="${TCPSRV_DST_HOST}:8983" \
-			TCPSRV_SOLR_CORE="logs" \
+			TCPSRV_PACKET=line \
+			TCPSRV_BINARY_OR_LIST=binary \
+			TCPSRV_DATASTORE=elasticsearch \
+			TCPSRV_DST_HOST=localhost \
+			TCPSRV_EL_HOST_PORT=${TCPSRV_DST_HOST}:9200 \
+			TCPSRV_EL_INDEX=log \
+			TCPSRV_EL_MAPPING=logs \
+			TCPSRV_SOLR_HOST_PORT=${TCPSRV_DST_HOST}:8983 \
+			TCPSRV_SOLR_CORE=logs \
 			TCPSRV_REDIS_PORT=6379
 
 RUN    		apk add --update curl tar xz bash git && \
