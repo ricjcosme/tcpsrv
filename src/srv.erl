@@ -1,21 +1,21 @@
 -module(srv).
 -author("Ricardo Cosme <ricjcosme@gmail.com>").
 -compile(export_all).
--define(PORT, case os:getenv("TCPSRV_PORT") of false -> 10001; [EPort] -> list_to_integer(EPort) end).
--define(SERVERS, case os:getenv("TCPSRV_SERVERS") of false -> 10; [EServers] ->  list_to_integer(EServers) end).
--define(TIMEOUT, case os:getenv("TCPSRV_TIMEOUT") of false -> 60000; [ETimeout] -> list_to_integer(ETimeout) end).
--define(PACKET, case os:getenv("TCPSRV_PACKET") of false -> line; [EPacket] -> EPacket end).
--define(BINARY_OR_LIST, case os:getenv("TCPSRV_BINARY_OR_LIST") of false -> binary; [EBinaryorlist] -> EBinaryorlist end).
-%% DATASTORE redis | elasticsearch (default) | solr, others can be added via toDataStore/2
--define(DATASTORE, case os:getenv("TCPSRV_DATASTORE") of false -> elasticsearch; [EDatastore] -> EDatastore end).
--define(DST_HOST, case os:getenv("TCPSRV_DST_HOST") of false -> "localhost"; [EDsthost] -> EDsthost  end).
--define(EL_HOST_PORT, case os:getenv("TCPSRV_EL_HOST_PORT") of false -> ?DST_HOST ++ ":9200"; [EElhostport] -> EElhostport end).
--define(EL_INDEX, case os:getenv("TCPSRV_EL_INDEX") of false -> "log"; [EElindex] -> EElindex end).
--define(EL_MAPPING, case os:getenv("TCPSRV_EL_MAPPING") of false -> "logs"; [EElmapping] -> EElmapping end).
--define(SOLR_HOST_PORT, case os:getenv("TCPSRV_SOLR_HOST_PORT") of false -> ?DST_HOST ++ ":8983"; [ESolrhostport] -> ESolrhostport end).
--define(SOLR_CORE, case os:getenv("TCPSRV_SOLR_CORE") of false -> "logs"; [ESolrcore] -> ESolrcore end).
+-define(PORT, list_to_integer(os:getenv("TCPSRV_PORT"))).
+-define(SERVERS, list_to_integer(os:getenv("TCPSRV_SERVERS"))).
+-define(TIMEOUT, list_to_integer(os:getenv("TCPSRV_TIMEOUT"))).
+-define(PACKET, list_to_atom(os:getenv("TCPSRV_PACKET"))).
+-define(BINARY_OR_LIST, list_to_atom(os:getenv("TCPSRV_BINARY_OR_LIST"))).
+%% redis | elasticsearch (default) | solr, others can be added with toDataStore/1
+-define(DATASTORE, list_to_atom(os:getenv("TCPSRV_DATASTORE"))). 
+-define(DST_HOST, os:getenv("TCPSRV_DST_HOST")).
+-define(EL_HOST_PORT, os:getenv("TCPSRV_EL_HOST_PORT")).
+-define(EL_INDEX, os:getenv("TCPSRV_EL_INDEX")).
+-define(EL_MAPPING, os:getenv("TCPSRV_EL_MAPPING")).
+-define(SOLR_HOST_PORT, os:getenv("TCPSRV_SOLR_HOST_PORT")).
+-define(SOLR_CORE, os:getenv("TCPSRV_SOLR_CORE")).
 -define(REDIS_HOST, ?DST_HOST).
--define(REDIS_PORT, case os:getenv("TCPSRV_REDIS_PORT") of false -> 6379; [ERedisport] -> list_to_integer(ERedisport) end).
+-define(REDIS_PORT, list_to_integer(os:getenv("TCPSRV_REDIS_PORT"))).
 
 start() ->
     case gen_tcp:listen(?PORT,[{active, false},{packet,?PACKET},?BINARY_OR_LIST]) of
