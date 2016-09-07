@@ -112,4 +112,4 @@ subs(Text, http) ->
     D = re:replace(C,"\r"," ",[{return,list},global]),
     E = re:replace(D,"\f"," ",[{return,list},global]),
     F = re:replace(E,"\"","'",[{return,list},global]),
-    re:replace(F,"\\\\","",[{return,list},global]).
+    re:replace(F,"\\\\","\\\\\\\\",[{return,list},global]).
