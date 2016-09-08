@@ -6,7 +6,7 @@
 -define(TIMEOUT, list_to_integer(os:getenv("TCPSRV_TIMEOUT"))).
 -define(PACKET, list_to_atom(os:getenv("TCPSRV_PACKET"))).
 -define(BINARY_OR_LIST, list_to_atom(os:getenv("TCPSRV_BINARY_OR_LIST"))).
-%% redis | elasticsearch (default) | solr, others can be added with toDataStore/1
+%% redis | elasticsearch (default) | solr, others can be added with toDataStore/2
 -define(DATASTORE, list_to_atom(os:getenv("TCPSRV_DATASTORE"))). 
 -define(DST_HOST, os:getenv("TCPSRV_DST_HOST")).
 -define(EL_HOST_PORT, os:getenv("TCPSRV_EL_HOST_PORT")).
@@ -101,15 +101,14 @@ http_post(URL, Body) ->
     R = httpc:request(Method, {URL, Header, Type, Body}, HTTPOptions, Options),
     io:format("~p~n", [R]).
 
-subs(Text, socket) ->
-    A = re:replace(Text,"\n"," ",[{return,list},global]),
-    B = re:replace(A,"\t"," ",[{return,list},global]),
-    re:replace(B,"\"","'",[{return,list},global]);
 subs(Text, http) ->
+    A = re:replace(Text,"\b"," ",[{return,list},global]),
+    B = re:replace(A,"\r"," ",[{return,list},global]),
+    C = re:replace(B,"\f"," ",[{return,list},global]),
+    D = re:replace(C,"\"","'",[{return,list},global]),
+    E = subs(D, all),
+    re:replace(E,"\\\\","\\\\\\\\",[{return,list},global]);
+subs(Text, _) ->
     A = re:replace(Text,"\n"," ",[{return,list},global]),
     B = re:replace(A,"\t"," ",[{return,list},global]),
-    C = re:replace(B,"\b"," ",[{return,list},global]),
-    D = re:replace(C,"\r"," ",[{return,list},global]),
-    E = re:replace(D,"\f"," ",[{return,list},global]),
-    F = re:replace(E,"\"","'",[{return,list},global]),
-    re:replace(F,"\\\\","\\\\\\\\",[{return,list},global]).
+    re:replace(B,"\"","'",[{return,list},global]).
